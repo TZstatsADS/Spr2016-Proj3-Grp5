@@ -1,37 +1,22 @@
-#########################################################
-### Train a classification model with training images ###
-#########################################################
+library(e1071)
 
-### Author: Yuting Ma
-### Project 3
-### ADS Spring 2016
-
-
-train <- function(dat_train, label_train, par=NULL){
+train_baseline <- function(dat_train, cost = 100) {
   
-  ### Train a Gradient Boosting Model (GBM) using processed features from training images
+  ### Train a linear support vector machine using processed features from training images
   
-  ### Input: 
-  ###  -  processed features from images 
-  ###  -  class labels for training images
+  ### dat_train: training data
+  ### cost: cost of constraints violation parameter for linear SVM
   ### Output: training model specification
   
-  ### load libraries
-  library("gbm")
+  ##### CURRENT STATUS (2016/03/05 23:00): 
+  ##### No cross-validation has been conducted yet
   
-  ### Train with gradient boosting model
-  if(is.null(par)){
-    depth <- 3
-  } else {
-    depth <- par$depth
-  }
-  fit_gbm <- gbm.fit(x=dat_train, y=label_train,
-                     n.trees=2000,
-                     distribution="bernoulli",
-                     interaction.depth=depth, 
-                     bag.fraction = 0.5,
-                     verbose=FALSE)
-  best_iter <- gbm.perf(fit_gbm, method="OOB")
-
-  return(list(fit=fit_gbm, iter=best_iter))
+  fit1 <- svm(y_cat ~ ., 
+              type = "C-classification", kernel = "linear", 
+              cost = 100,
+              data = dat_train)
+  return(fit1)
+  
 }
+
+

@@ -1,40 +1,79 @@
+
 #############################################################
-### Construct visual features for training/testing images ###
+### Construct features out of images for training/testing ###
 #############################################################
 
-### Author: Yuting Ma
-### Project 3
-### ADS Spring 2016
+library(EBImage)
 
-feature <- function(img_dir, img_name, data_name=NULL){
+feature <- function(img_dir, data_dir) {
   
-  ### Construct process features for training/testing images
-  ### Sample simple feature: Extract raw pixel values os features
+  ### Constructs features out of images for training/testing
   
-  ### Input: a directory that contains images ready for processing
-  ### Output: an .RData file contains processed features for the images
+  ### img_dir: class "character", path to directory of images to be processed
+  ### data_dir: class "character", path to directory to place feature data files in
+  ### Output: .rds files, one for each image, containing the features for that image
   
-  ### load libraries
-  library("EBImage")
+  ##### CURRENT STATUS (2016/03/05 19:00): 
+  ##### This function constructs only color histogram features.
   
-  n_files <- length(list.files(img_dir))
+  file_names <- list.files(img_dir, pattern = "jpg")
+  file_names <- sort(file_names)
+  file_paths <- Sys.glob(paste(img_dir, "/*.jpg", sep = ""))
+  file_paths <- sort(file_paths)
   
-  ### determine img dimensions
-  img0 <-  readImage(paste0(img_dir, img_name, "_", 1, ".jpg"))
-  mat1 <- as.matrix(img0)
-  n_r <- nrow(img0)
-  n_c <- ncol(img0)
-  
-  ### store vectorized pixel values of images
-  dat <- array(dim=c(n_files, n_r*n_c)) 
-  for(i in 1:n_files){
-    img <- readImage(paste0(img_dir, img_name, "_", i, ".jpg"))
-    dat[i,] <- as.vector(img)
+  # Construct color (RGB) histogram features
+  # Note: Some images may be invalid; features will not be constructed for those images
+  for (i in 1:length(file_paths)) {
+    tryCatch({
+      img <- readImage(file_paths[i])
+      img <- resize(img, 256, 256) # resize image for faster feature construction
+      mat <- imageData(img)
+      # Tuning parameters: number of red bins nR, number of green bins nG, number of blue bins nB
+      nR <- 5
+      nG <- 5
+      nB <- 5
+      rBin <- seq(0, 1, length.out=nR)
+      gBin <- seq(0, 1, length.out=nG)
+      bBin <- seq(0, 1, length.out=nB)
+      freq_rgb <- as.data.frame(table(factor(findInterval(mat[,,1], rBin), levels=1:nR), 
+                                      factor(findInterval(mat[,,2], gBin), levels=1:nG), 
+                                      factor(findInterval(mat[,,3], bBin), levels=1:nB)))
+      rgb_feature <- as.numeric(freq_rgb$Freq)/(ncol(mat)*nrow(mat)) # normalization
+      saveRDS(rgb_feature,
+              file = paste(data_dir, "/", unlist(strsplit(file_names[i], "[.]"))[1], ".rds", sep = ""))
+    }, 
+    error = function(c) "invalid or corrupt JPEG file, or no RGB values present")
   }
+}
+
+feature_df <- function(data_dir) {
   
-  ### output constructed features
-  if(!is.null(data_name)){
-    save(dat, file=paste0("./output/feature_", data_name, ".RData"))
+  ### Create a data.frame with features and labels for all observations
+  
+  ### data_dir: class "character", path to directory where feature data files are placed
+  ### Output: data.frame with features and labels for all observations
+  
+  feature_names <- list.files(data_dir, pattern = "rds")
+  feature_names <- sort(feature_names)
+  feature_file_names <- Sys.glob(paste(data_dir, "/*.rds", sep = ""))
+  feature_file_names <- sort(feature_file_names)
+  
+  # extract vector of labels (cat = 1, dog = 0)
+  breed_name <- rep(NA, length(feature_names))
+  for(i in 1:length(feature_names)){
+    tt <- unlist(strsplit(feature_names[i], "_"))
+    tt <- tt[-length(tt)]
+    breed_name[i] = paste(tt, collapse="_", sep="")
   }
-  return(dat)
+  cat_breed <- c("Abyssinian", "Bengal", "Birman", "Bombay", "British_Shorthair", "Egyptian_Mau",
+                 "Maine_Coon", "Persian", "Ragdoll", "Russian_Blue", "Siamese", "Sphynx")
+  iscat <- breed_name %in% cat_breed
+  y_cat <- as.numeric(iscat)
+  
+  # create data.frame with labels and features
+  catdog <- do.call('rbind', lapply(feature_file_names, readRDS))
+  catdog <- as.data.frame(catdog)
+  catdog <- cbind(y_cat, catdog)
+  catdog$y_cat <- as.factor(catdog$y_cat)
+  return(catdog)
 }

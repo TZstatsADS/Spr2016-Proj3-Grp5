@@ -1,26 +1,13 @@
-######################################################
-### Fit the classification model with testing data ###
-######################################################
+library(e1071)
 
-### Author: Yuting Ma
-### Project 3
-### ADS Spring 2016
-
-test <- function(fit_train, dat_test){
+test_baseline <- function(fit_baseline, dat_test) {
   
-  ### Fit the classfication model with testing data
+  ### Fit the linear SVM classification model onto testing data
   
-  ### Input: 
-  ###  - the fitted classification model using training data
-  ###  -  processed features from testing images 
-  ### Output: training model specification
+  ### fit_baseline: model object
+  ### dat_test: testing data
+  ### Output: confusion matrix of predicted labels vs. actual labels
   
-  ### load libraries
-  library("gbm")
-  
-  pred <- predict(fit_train$fit, newdata=dat_test, 
-                  n.trees=fit_train$iter, type="response")
-  
-  return(as.numeric(pred> 0.5))
+  pred <- predict(fit_baseline, newdata = dat_test)
+  return(table(pred, dat_test$y_cat))
 }
-
