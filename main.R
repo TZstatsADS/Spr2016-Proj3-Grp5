@@ -17,8 +17,10 @@ feature(img_dir, data_dir)
 
 # create matrix with features for all observations
 catdog <- feature_mat(data_dir)
+saveRDS(catdog, "./output/feature.rds")
 # create vector of class labels
 y_cat <- label_vec(data_dir)
+saveRDS(y_cat, "./output/label.rds")
 
 # split into training and testing data
 source("./lib/split.R")
