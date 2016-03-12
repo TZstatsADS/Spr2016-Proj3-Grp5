@@ -28,6 +28,8 @@ dat_train <- catdog[ttsplit, ]
 dat_test <- catdog[!1:nrow(catdog) %in% ttsplit, ]
 saveRDS(dat_train, file = "./output/train.rds")
 saveRDS(dat_test, file = "./output/test.rds")
+lab_train <- y_cat[ttsplit]
+lab_test <- y_cat[!1:nrow(catdog) %in% ttsplit]
 
 # fit baseline on training data 
 source("./lib/train.R")
