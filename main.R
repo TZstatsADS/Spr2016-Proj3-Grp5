@@ -6,16 +6,19 @@
 
 # NOTE: Place your images in a folder outside the repository (too large for Github.)
 
-source("./lib/feature.R") # read in feature.R which contains the function feature(img_dir, data_dir)
+source("./lib/feature.R") # read in feature.R which contains the functions 
+                          # feature(), feature_mat() and label_vec()
 
-img_dir <- "../data/images.tar/images"
-data_dir <- "./output/features"
+img_dir <- "../data/images.tar/images" # this should be consistent on everyone's computers
+data_dir <- "./output/features" # this should be consisted on everyone's computers
 
-# this will write a new feature file for each image; only run if necessary
+# this will write a new feature file for each image; only run if new features are going to be created
 feature(img_dir, data_dir)
 
-# create data.frame with features and labels for all observations
-catdog <- feature_df(data_dir)
+# create matrix with features for all observations
+catdog <- feature_mat(data_dir)
+# create vector of class labels
+y_cat <- label_vec(data_dir)
 
 # split into training and testing data
 source("./lib/split.R")

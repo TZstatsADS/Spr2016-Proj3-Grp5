@@ -46,17 +46,30 @@ feature <- function(img_dir, data_dir) {
   }
 }
 
-feature_df <- function(data_dir) {
+feature_mat <- function(data_dir) {
   
-  ### Create a data.frame with features and labels for all observations
+  ### Create a matrix with features for all observations
   
   ### data_dir: class "character", path to directory where feature data files are placed
-  ### Output: data.frame with features and labels for all observations
+  ### Output: matrix with features for all observations
+  
+  feature_file_names <- Sys.glob(paste(data_dir, "/*.rds", sep = ""))
+  feature_file_names <- sort(feature_file_names)
+  
+  # create feature matrix
+  catdog <- do.call('rbind', lapply(feature_file_names, readRDS))
+  return(catdog)
+}
+
+label_vec <- function(data_dir) {
+  
+  ### Create a vector with labels for all observations
+  
+  ### data_dir: class "character", path to directory where feature data files are placed
+  ### Output: vector with labels for all observations
   
   feature_names <- list.files(data_dir, pattern = "rds")
   feature_names <- sort(feature_names)
-  feature_file_names <- Sys.glob(paste(data_dir, "/*.rds", sep = ""))
-  feature_file_names <- sort(feature_file_names)
   
   # extract vector of labels (cat = 1, dog = 0)
   breed_name <- rep(NA, length(feature_names))
@@ -69,11 +82,6 @@ feature_df <- function(data_dir) {
                  "Maine_Coon", "Persian", "Ragdoll", "Russian_Blue", "Siamese", "Sphynx")
   iscat <- breed_name %in% cat_breed
   y_cat <- as.numeric(iscat)
+  return(y_cat)
   
-  # create data.frame with labels and features
-  catdog <- do.call('rbind', lapply(feature_file_names, readRDS))
-  catdog <- as.data.frame(catdog)
-  catdog <- cbind(y_cat, catdog)
-  catdog$y_cat <- as.factor(catdog$y_cat)
-  return(catdog)
 }
