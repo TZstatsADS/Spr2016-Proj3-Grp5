@@ -29,7 +29,9 @@ dat_test <- catdog[!1:nrow(catdog) %in% ttsplit, ]
 saveRDS(dat_train, file = "./output/train.rds")
 saveRDS(dat_test, file = "./output/test.rds")
 lab_train <- y_cat[ttsplit]
+lab_train <- as.factor(lab_train)
 lab_test <- y_cat[!1:nrow(catdog) %in% ttsplit]
+lab_test <- as.factor(lab_test)
 saveRDS(lab_train, file = "./output/train_lab.rds")
 saveRDS(lab_test, file = "./output/test_lab.rds")
 
