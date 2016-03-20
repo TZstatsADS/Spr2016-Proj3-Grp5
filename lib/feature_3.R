@@ -48,7 +48,7 @@ feature <- function(img_dir, data_dir) {
       threshold <- otsu(img_bin)
       img_bin <- img_bin > threshold # create binary black/white image using Otsu threshold
       writeImage(img_bin, paste(img_dir, "/", unlist(strsplit(file_names[i], split = "[.]"))[1], 
-                            "_bin.jpg", sep = ""), type = "jpeg")
+                                "_bin.jpg", sep = ""), type = "jpeg")
       momocs_out <- import_jpg1(jpg.path = paste(img_dir, "/", 
                                                  unlist(strsplit(file_names[i], split = "[.]"))[1], 
                                                  "_bin.jpg", sep = ""),
@@ -60,7 +60,21 @@ feature <- function(img_dir, data_dir) {
       if(length(momocs_coeff) != 40) {
         next
       }
-      saveRDS(momocs_coeff,
+      
+      mat <- imageData(img)
+      nR <- 5
+      nG <- 5
+      nB <- 5
+      rBin <- seq(0, 1, length.out=nR)
+      gBin <- seq(0, 1, length.out=nG)
+      bBin <- seq(0, 1, length.out=nB)
+      freq_rgb <- as.data.frame(table(factor(findInterval(mat[,,1], rBin), levels=1:nR), 
+                                      factor(findInterval(mat[,,2], gBin), levels=1:nG), 
+                                      factor(findInterval(mat[,,3], bBin), levels=1:nB)))
+      rgb_feature <- as.numeric(freq_rgb$Freq)/(ncol(mat)*nrow(mat)) # normalization
+      
+      final <- c(rgb_feature, momocs_coeff)
+      saveRDS(final,
               file = paste(data_dir, "/", unlist(strsplit(file_names[i], "[.]"))[1], ".rds", sep = ""))
 
     }, 
