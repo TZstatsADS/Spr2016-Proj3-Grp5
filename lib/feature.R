@@ -15,10 +15,14 @@ feature <- function(img_dir, data_dir) {
   
   ##### CURRENT STATUS (2016/03/05 19:00): 
   ##### This function constructs only color histogram features.
+  ##### System time on Arnold's computer: user 1250.45 system 265.78 elapsed 1545.27
   
-  file_names <- list.files(img_dir, pattern = "jpg")
+  file_names <- list.files(img_dir, pattern = "[[:digit:]].jpg") # THIS IS NOT A GOOD SOLUTION
   file_names <- sort(file_names)
-  file_paths <- Sys.glob(paste(img_dir, "/*.jpg", sep = ""))
+  file_paths <- rep(NA_character_, length(file_names))
+  for (i in 1:length(file_names)) {
+    file_paths[i] <- paste(img_dir, file_names[i], sep = "/")
+  }
   file_paths <- sort(file_paths)
   
   # Construct color (RGB) histogram features
