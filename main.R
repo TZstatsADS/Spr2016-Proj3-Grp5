@@ -35,10 +35,10 @@ saveRDS(lab_test, file = "./output/test_lab.rds")
 
 # fit baseline on training data 
 source("./lib/train.R")
-fit_train_baseline <- train_baseline(dat_train, cost = 100)
+system.time(fit_train_baseline <- train_baseline(dat_train, lab_train, cost = 100))
 saveRDS(fit_train_baseline, file = "./output/fit_train_baseline.rds")
 
 # predict baseline performance on testing data
 source("./lib/test.R")
-pred_test_baseline <- test_baseline(fit_train_baseline, dat_test)
+pred_test_baseline <- test_baseline(fit_train_baseline, dat_test, lab_test)
 saveRDS(pred_test_baseline, file = "./output/pred_test_baseline.rds")

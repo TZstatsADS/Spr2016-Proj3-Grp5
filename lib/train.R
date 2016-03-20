@@ -14,8 +14,7 @@ train_baseline <- function(dat_train, lab_train, cost = 100) {
   
   fit1 <- svm(x = dat_train, y = lab_train, 
               type = "C-classification", kernel = "linear", 
-              cost = 100,
-              data = dat_train)
+              cost = 100)
   return(fit1)
   
 }
