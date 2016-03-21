@@ -9,9 +9,9 @@ test <- function(fit_train, dat_test) {
   ### Output: a list of 2; first element is a vector of class label predictions for the BASELINE model,
   ###                      second element is a vector of class label predictions for the FINAL model
   
-  pred_baseline <- predict(fit_train[[1]], newdata = dat_test)
-  if (!is.na(c[[2]])) {
-    pred_final <- predict(fit_train[[2]], newdata = dat_test)
+  pred_baseline <- predict(fit_train[[1]], newdata = dat_test[, 1:125])
+  if (!is.na(fit_train[[2]])) {
+    pred_final <- predict(fit_train[[2]], newdata = dat_test[, 126:1290])
   } else {pred_final <- NA}
   
   output <- list(pred_baseline, pred_final)

@@ -35,6 +35,12 @@ lab_test <- as.factor(lab_test)
 saveRDS(lab_train, file = "./output/train_lab.rds")
 saveRDS(lab_test, file = "./output/test_lab.rds")
 
+# load training and testing data (skip all the above lines)
+dat_train <- readRDS("./output/train.rds")
+dat_test <- readRDS("./output/test.rds")
+lab_train <- readRDS("./output/train_lab.rds")
+lab_test <- readRDS("./output/test_lab.rds")
+
 # fit baseline and final models to training data 
 source("./lib/train.R")
 system.time(fit_train <- train(dat_train, lab_train))
