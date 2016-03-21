@@ -23,7 +23,7 @@ feature <- function(img_dir, data_dir) {
   #####          This will thus double the number of images in your image directory.
   ##### Maybe a separate directory for the processed files should be created.
   ##### Time to construct features on Arnold's computer:
-  ##### user: 2655.92 system: 43.69 elapsed 2824.62 (approx 47 minutes)
+  ##### (to be updated)
   
   file_names <- list.files(img_dir, pattern = "[[:digit:]].jpg") 
   # call to "pattern" is to distinguish between the original images and the processed black-white images
