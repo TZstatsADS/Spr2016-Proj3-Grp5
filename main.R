@@ -42,5 +42,5 @@ saveRDS(fit_train, file = "./output/fit_train.rds")
 
 # predict baseline performance on testing data
 source("./lib/test.R")
-pred_test <- test(fit_train_baseline, dat_test)
+pred_test <- test(fit_train, dat_test)
 saveRDS(pred_test, file = "./output/pred_test.rds")
