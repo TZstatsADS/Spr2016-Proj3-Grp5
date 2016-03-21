@@ -1,21 +1,30 @@
+# INSERT ALL PACKAGES NEEDED FOR MODELS HERE, INCLUDING INSTALLATION LINES
+
+install.packages("e1071")
 library(e1071)
 
-train_baseline <- function(dat_train, lab_train, cost = 100) {
+train <- function(dat_train, lab_train) {
   
-  ### Train a linear support vector machine using processed features from training images
+  ### Train a linear support vector machine with color histogram features AND
+  ### train the final model (NOT YET IMPLEMENTED) with additional features
   
-  ### dat_train: training features
-  ### lab_train: training labels
-  ### cost: cost of constraints violation parameter for linear SVM
-  ### Output: training model specification
+  ### !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ### !!!THIS ASSUMES THAT THE COLOR HISTOGRAM FEATURES WILL BE!!! 
+  ### !!!     THE FIRST 125 COLUMNS OF THE FEATURE MATRIX      !!!
+  ### !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+  ### dat_train: constructed features for training data
+  ### lab_train: class labels for training data
+  ### Output: a list of 2; first element is the fitted BASELINE model, second is the fitted FINAL model
   
   ##### CURRENT STATUS (2016/03/05 23:00): 
-  ##### No cross-validation has been conducted yet
+  ##### Final model has not yet been implemented
   
-  fit1 <- svm(x = dat_train, y = lab_train, 
+  baseline <- svm(x = dat_train[, 1:125], y = lab_train, 
               type = "C-classification", kernel = "linear", 
               class.weights = 100 / table(lab_train), cost = 100)
-  return(fit1)
+  final <- NA # INSERT FINAL MODEL HERE
+  return(list(baseline, final))
   
 }
 
