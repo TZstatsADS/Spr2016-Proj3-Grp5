@@ -3,7 +3,14 @@
 ### Construct features out of images for training/testing ###
 #############################################################
 
+# CONSTRUCTS HARMONIC COEFFICIENTS FROM ELLIPTICAL FOURIER OUTLINE ANALYSIS
+
+source("http://bioconductor.org/biocLite.R")
+biocLite("EBImage")
 library(EBImage)
+install.packages("devtools")
+devtools::install_github("vbonhomme/Momocs")
+library(Momocs)
 
 feature <- function(img_dir, data_dir) {
   
@@ -13,9 +20,13 @@ feature <- function(img_dir, data_dir) {
   ### data_dir: class "character", path to directory to place feature data files in
   ### Output: .rds files, one for each image, containing the features for that image
   
-  ##### CURRENT STATUS (2016/03/05 19:00): 
-  ##### This function constructs only color histogram features.
-  ##### System time on Arnold's computer: user 1250.45 system 265.78 elapsed 1545.27
+  ##### CURRENT STATUS (2016/03/18 19:30): 
+  ##### This function constructs only harmonic coefficient features.
+  ##### WARNING: This function also writes a new processed image file per image.
+  #####          This will thus double the number of images in your image directory.
+  ##### Maybe a separate directory for the processed files should be created.
+  ##### Running time on Arnold's computer:
+  ##### user: 2655.92 system: 43.69 elapsed 2824.62 (approx 47 minutes)
   
   file_names <- list.files(img_dir, pattern = "[[:digit:]].jpg") # THIS IS NOT A GOOD SOLUTION
   file_names <- sort(file_names)
@@ -25,14 +36,32 @@ feature <- function(img_dir, data_dir) {
   }
   file_paths <- sort(file_paths)
   
-  # Construct color (RGB) histogram features
+  # Construct harmonic coefficient features from image outline
   # Note: Some images may be invalid; features will not be constructed for those images
+  # Note: Some images may result in outlines with too little detail; features will not be
+  #       constructed for those images
   for (i in 1:length(file_paths)) {
     tryCatch({
       img <- readImage(file_paths[i])
-      img <- resize(img, 256, 256) # resize image for faster feature construction
+      img_bin <- channel(img, mode = "gray") # convert image to greyscale
+      img_bin <- gblur(img_bin, sigma = 5) # smooth image with a low-pass filter
+      threshold <- otsu(img_bin)
+      img_bin <- img_bin > threshold # create binary black/white image using Otsu threshold
+      writeImage(img_bin, paste(img_dir, "/", unlist(strsplit(file_names[i], split = "[.]"))[1], 
+                                "_bin.jpg", sep = ""), type = "jpeg")
+      momocs_out <- import_jpg1(jpg.path = paste(img_dir, "/", 
+                                                 unlist(strsplit(file_names[i], split = "[.]"))[1], 
+                                                 "_bin.jpg", sep = ""),
+                                threshold = threshold)
+      momocs_out <- Out(list(momocs_out))
+      momocs_out <- coo_smooth(momocs_out, 5) %>% coo_scale() %>% coo_center()
+      momocs_ef <- efourier(momocs_out, nb.h = 10)
+      momocs_coeff <- momocs_ef$coe[1, ]
+      if(length(momocs_coeff) != 40) {
+        next
+      }
+      
       mat <- imageData(img)
-      # Tuning parameters: number of red bins nR, number of green bins nG, number of blue bins nB
       nR <- 5
       nG <- 5
       nB <- 5
@@ -43,10 +72,13 @@ feature <- function(img_dir, data_dir) {
                                       factor(findInterval(mat[,,2], gBin), levels=1:nG), 
                                       factor(findInterval(mat[,,3], bBin), levels=1:nB)))
       rgb_feature <- as.numeric(freq_rgb$Freq)/(ncol(mat)*nrow(mat)) # normalization
-      saveRDS(rgb_feature,
+      
+      final <- c(rgb_feature, momocs_coeff)
+      saveRDS(final,
               file = paste(data_dir, "/", unlist(strsplit(file_names[i], "[.]"))[1], ".rds", sep = ""))
+
     }, 
-    error = function(c) "invalid or corrupt JPEG file, or no RGB values present")
+    error = function(c) "invalid or corrupt JPEG file")
   }
 }
 
