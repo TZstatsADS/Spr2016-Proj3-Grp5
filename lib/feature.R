@@ -64,7 +64,7 @@ feature <- function(img_dir, data_dir) {
       momocs_ef <- efourier(momocs_out, nb.h = 10)
       momocs_coeff <- momocs_ef$coe[1, ]
       if(length(momocs_coeff) != 40) {
-        next
+        momocs_coeff <- rep(NA_real_, 40)
       }
       
       mat <- imageData(img)
