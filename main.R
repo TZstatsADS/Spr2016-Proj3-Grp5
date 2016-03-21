@@ -10,10 +10,10 @@ source("./lib/feature.R") # read in feature.R which contains the functions
                           # feature(), feature_mat() and label_vec()
 
 img_dir <- "../data/images.tar/images" # this should be consistent on everyone's computers
-data_dir <- "./output/features" # this should be consisted on everyone's computers
+data_dir <- "./output/features" # this should be consistent on everyone's computers
 
 # this will write a new feature file for each image; only run if new features are going to be created
-feature(img_dir, data_dir)
+system.time(feature(img_dir, data_dir))
 
 # create matrix with features for all observations
 catdog <- feature_mat(data_dir)
@@ -35,12 +35,12 @@ lab_test <- as.factor(lab_test)
 saveRDS(lab_train, file = "./output/train_lab.rds")
 saveRDS(lab_test, file = "./output/test_lab.rds")
 
-# fit baseline on training data 
+# fit baseline and final models to training data 
 source("./lib/train.R")
-system.time(fit_train_baseline <- train_baseline(dat_train, lab_train, cost = 100))
-saveRDS(fit_train_baseline, file = "./output/fit_train_baseline.rds")
+system.time(fit_train <- train(dat_train, lab_train))
+saveRDS(fit_train, file = "./output/fit_train.rds")
 
 # predict baseline performance on testing data
 source("./lib/test.R")
-pred_test_baseline <- test_baseline(fit_train_baseline, dat_test, lab_test)
-saveRDS(pred_test_baseline, file = "./output/pred_test_baseline.rds")
+pred_test <- test(fit_train_baseline, dat_test)
+saveRDS(pred_test, file = "./output/pred_test.rds")
