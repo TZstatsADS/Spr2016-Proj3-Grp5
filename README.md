@@ -1,6 +1,6 @@
-Project Cats vs. Dogs (Columbia University STAT W4249 Applied Data Science Project 3, Spring 2016)
+##Project Cats vs. Dogs (Columbia University STAT W4249 Applied Data Science Project 3, Spring 2016)
 
-Team Members:
+####Team Members:
 - Gu, Xinghao
 - Islam, Schinria Rema
 - Lau, Arnold Chua
