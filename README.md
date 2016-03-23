@@ -1,24 +1,12 @@
-# Project CatsDogs: Predictive analytics-model evaluation and selection
+Project Cats vs. Dogs (Columbia University STAT W4249 Applied Data Science Project 3, Spring 2016)
 
-#### - for cats versus dogs image data
+Team Members:
+- Gu, Xinghao
+- Islam, Schinria Rema
+- Lau, Arnold Chua
+- Zhou, Yi
+- Zhu, Yibo
 
-Read [full project description](doc/project3_desc.md)
+Summary: In this project, we used spatial color histograms and elliptic Fourier analysis to construct features out of the Oxford-IIIT Pet Dataset (http://www.robots.ox.ac.uk/~vgg/data/pets/) and fit a binary classification model with adaptive boosting to distinguish between cats and dogs.
 
-In this project, we will carry out model evaluation and selection for predictive analytics on image data. As data scientists, we often need to evaluate different modeling/analysis strategies and decide what is the best. Such decisions need to be supported with sound evidence in the form of model assessment, validation and comparison. In addition, we also need to communicate our decision and supporting evidence clearly and convincingly in an accessible fashion.
-
-![image](https://i.ytimg.com/vi/8Ryo8Pf4NNE/hqdefault.jpg)
-
----
-Following [suggestions](http://nicercode.github.io/blog/2013-04-05-projects/) by [RICH FITZJOHN](http://nicercode.github.io/about/#Team) (@richfitz). This folder is orgarnized as follows.
-
-```
-proj/
-├── lib/
-├── data/
-├── doc/
-├── figs/
-└── output/
-```
-
-Please see each subfolder for a README file.
-
+Contribution Statement: Lau developed the baseline classification model for evaluation (a linear support vector machine with global color histogram features). Lau, Gu and Zhu constructed the new features. Gu, Zhu, Islam and Zhou conducted model selection and assessment. Lau conducted code testing and debugging. All team members prepared the presentation. All team members approve our work presented in our GitHub repository including this contribution statement.
