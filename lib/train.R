@@ -26,7 +26,7 @@ train <- function(dat_train, lab_train) {
               type = "C-classification", kernel = "linear", 
               cost = 1)
   final <- ada(x = dat_train[, 126:1290], y = lab_train,
-               type = "discrete", nu = 0.1)
+               type = "discrete", nu = 0.1, iter = 40)
   return(list(baseline, final))
   
 }
