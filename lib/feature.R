@@ -25,7 +25,7 @@ feature <- function(img_dir, data_dir) {
   ##### Time to construct features on Arnold's computer:
   ##### user 5428.28 system 45.06 elapsed 5628.41 (93.8 minutes)
   
-  file_names <- list.files(img_dir, pattern = "[[:digit:]].jpg") 
+  file_names <- list.files(img_dir, pattern = "jpg") 
   # call to "pattern" is to distinguish between the original images and the processed black-white images
   file_names <- sort(file_names)
   file_paths <- rep(NA_character_, length(file_names))

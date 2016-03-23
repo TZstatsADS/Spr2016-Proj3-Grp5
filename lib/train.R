@@ -1,7 +1,9 @@
 # INSERT ALL PACKAGES NEEDED FOR MODELS HERE, INCLUDING INSTALLATION LINES
 
 install.packages("e1071")
+install.packages("ada")
 library(e1071)
+library(ada)
 
 train <- function(dat_train, lab_train) {
   
@@ -22,8 +24,9 @@ train <- function(dat_train, lab_train) {
   
   baseline <- svm(x = dat_train[, 1:125], y = lab_train, 
               type = "C-classification", kernel = "linear", 
-              class.weights = 100 / table(lab_train), cost = 100)
-  final <- NA # INSERT FINAL MODEL HERE
+              class.weights = 100 / table(lab_train), cost = 1)
+  final <- ada(x = dat_train[, 126:1290], y = lab_train,
+               type = "discrete", nu = 0.1)
   return(list(baseline, final))
   
 }
